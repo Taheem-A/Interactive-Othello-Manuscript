@@ -1,19 +1,15 @@
 // src/App.jsx
 import { useMemo, useState } from "react";
-import {
-  SCENES,
-  FEED_ITEMS,
-  LOG_ITEMS,
-  JOURNAL_ITEMS,
-  computeMode
-} from "./data.js";
+import { SCENES, computeMode } from "./data/index.js";
+import { StatsPanel } from "./components/StatsPanel.jsx";
+import { TabbedPanels } from "./components/TabbedPanels.jsx";
 
 function findScene(id) {
   return SCENES.find((s) => s.id === id);
 }
 
 export default function App() {
-  const [currentSceneId, setCurrentSceneId] = useState("act3_scene1");
+  const [currentSceneId, setCurrentSceneId] = useState("act3_start");
 
   const [stats, setStats] = useState({
     trust: 60,
@@ -21,7 +17,7 @@ export default function App() {
     dependence: 20
   });
 
-  const [mode, setMode] = useState(computeMode(stats));
+  const [mode, setMode] = useState(computeMode({ trust: 60, jealousy: 15 }));
 
   const [unlockedFeed, setUnlockedFeed] = useState([]);
   const [unlockedLogs, setUnlockedLogs] = useState([]);
@@ -32,8 +28,7 @@ export default function App() {
     [currentSceneId]
   );
 
-  // On entering a scene, automatically unlock any feed/journals/logs
-  // (This is a simple effect-like behaviour triggered manually.)
+  // handle unlocks when entering a new scene
   useMemo(() => {
     if (!currentScene) return;
 
@@ -65,9 +60,10 @@ export default function App() {
   function handleChoice(choice) {
     if (!choice) return;
 
-    // apply stat effects
     const newStats = {
-      trust: clampStat((stats.trust ?? 0) + (choice.effects?.trust ?? 0)),
+      trust: clampStat(
+        (stats.trust ?? 0) + (choice.effects?.trust ?? 0)
+      ),
       jealousy: clampStat(
         (stats.jealousy ?? 0) + (choice.effects?.jealousy ?? 0)
       ),
@@ -78,7 +74,6 @@ export default function App() {
 
     const newMode = computeMode(newStats);
 
-    // unlock extras
     if (choice.unlockFeed) {
       addToUnlocked(choice.unlockFeed, setUnlockedFeed);
     }
@@ -95,9 +90,10 @@ export default function App() {
   }
 
   function restart() {
-    setCurrentSceneId("act3_scene1");
-    setStats({ trust: 60, jealousy: 15, dependence: 20 });
-    setMode(computeMode({ trust: 60, jealousy: 15 }));
+    const baseStats = { trust: 60, jealousy: 15, dependence: 20 };
+    setCurrentSceneId("act3_start");
+    setStats(baseStats);
+    setMode(computeMode(baseStats));
     setUnlockedFeed([]);
     setUnlockedLogs([]);
     setUnlockedJournals([]);
@@ -118,13 +114,11 @@ export default function App() {
       <header className="app-header">
         <h1>Othello Interactive Narrative Engine</h1>
         <p className="subtitle">
-          Explore Othello&apos;s choices through jealousy, trust, and Iago&apos;s
-          manipulation.
+          Explore how jealousy, trust, and manipulation reshape the tragedy.
         </p>
       </header>
 
       <div className="layout">
-        {/* Left: main narrative + choices */}
         <main className="main-panel">
           <section className="scene-card">
             <h2>{currentScene.title}</h2>
@@ -155,7 +149,6 @@ export default function App() {
           </section>
         </main>
 
-        {/* Right: stats + tabs */}
         <aside className="side-panel">
           <StatsPanel stats={stats} mode={mode} />
           <TabbedPanels
@@ -168,8 +161,9 @@ export default function App() {
 
       <footer className="app-footer">
         <p>
-          Based on William Shakespeare&apos;s <em>Othello</em>. All text here is
-          a creative adaptation for an ENG4U project.
+          Based on William Shakespeare&apos;s <em>Othello</em>. This interactive
+          adaptation was created as a creative project to explore theme and
+          character.
         </p>
       </footer>
     </div>
@@ -178,11 +172,9 @@ export default function App() {
 
 function ChoicesList({ scene, mode, stats, onChoice }) {
   const visibleChoices = (scene.choices || []).filter((choice) => {
-    // jealousy threshold:
     if (typeof choice.minJealousy === "number") {
       if (stats.jealousy < choice.minJealousy) return false;
     }
-    // mode requirement (for final scene)
     if (choice.modeRequired && scene.isFinalDecision) {
       return choice.modeRequired === mode;
     }
@@ -207,146 +199,5 @@ function ChoicesList({ scene, mode, stats, onChoice }) {
         </button>
       ))}
     </div>
-  );
-}
-
-function StatsPanel({ stats, mode }) {
-  return (
-    <section className="stats-card">
-      <h3>Emotional Variables</h3>
-      <StatBar label="Trust in Desdemona" value={stats.trust} />
-      <StatBar label="Jealousy" value={stats.jealousy} />
-      <StatBar label="Dependence on Iago" value={stats.dependence} />
-      <p className="mode-text">
-        Mode: <strong>{mode}</strong>
-      </p>
-    </section>
-  );
-}
-
-function StatBar({ label, value }) {
-  return (
-    <div className="stat-row">
-      <div className="stat-label">
-        {label} <span className="stat-value">{value}</span>
-      </div>
-      <div className="stat-bar">
-        <div className="stat-bar-fill" style={{ width: `${value}%` }} />
-      </div>
-    </div>
-  );
-}
-
-// --- Tabs for Feed / Logs / Journals ---
-
-function TabbedPanels({ unlockedFeed, unlockedLogs, unlockedJournals }) {
-  const [activeTab, setActiveTab] = useState("feed");
-
-  return (
-    <section className="tabs-card">
-      <div className="tabs-header">
-        <button
-          className={
-            activeTab === "feed" ? "tab-button active" : "tab-button"
-          }
-          onClick={() => setActiveTab("feed")}
-        >
-          Social Feed
-        </button>
-        <button
-          className={
-            activeTab === "logs" ? "tab-button active" : "tab-button"
-          }
-          onClick={() => setActiveTab("logs")}
-        >
-          Iago&apos;s Logs
-        </button>
-        <button
-          className={
-            activeTab === "journals" ? "tab-button active" : "tab-button"
-          }
-          onClick={() => setActiveTab("journals")}
-        >
-          Desdemona&apos;s Journals
-        </button>
-      </div>
-
-      <div className="tabs-body">
-        {activeTab === "feed" && <FeedPanel unlockedIds={unlockedFeed} />}
-        {activeTab === "logs" && <LogsPanel unlockedIds={unlockedLogs} />}
-        {activeTab === "journals" && (
-          <JournalsPanel unlockedIds={unlockedJournals} />
-        )}
-      </div>
-    </section>
-  );
-}
-
-function FeedPanel({ unlockedIds }) {
-  if (!unlockedIds.length) {
-    return <p className="muted-text">No public rumours yet.</p>;
-  }
-
-  const items = unlockedIds
-    .map((id) => FEED_ITEMS[id])
-    .filter(Boolean)
-    .reverse(); // show newest first
-
-  return (
-    <ul className="feed-list">
-      {items.map((item) => (
-        <li key={item.id} className="feed-item">
-          <div className="feed-author">{item.author}</div>
-          <div className="feed-act">{item.act}</div>
-          <p className="feed-text">{item.text}</p>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function LogsPanel({ unlockedIds }) {
-  if (!unlockedIds.length) {
-    return (
-      <p className="muted-text">
-        No logs unlocked. Iago prefers to write only when his plans advance.
-      </p>
-    );
-  }
-
-  const items = unlockedIds.map((id) => LOG_ITEMS[id]).filter(Boolean);
-
-  return (
-    <ul className="log-list">
-      {items.map((item) => (
-        <li key={item.id} className="log-item">
-          <h4>{item.title}</h4>
-          <p>{item.text}</p>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function JournalsPanel({ unlockedIds }) {
-  if (!unlockedIds.length) {
-    return (
-      <p className="muted-text">
-        Desdemona has not written anything you can &quot;see&quot; yet.
-      </p>
-    );
-  }
-
-  const items = unlockedIds.map((id) => JOURNAL_ITEMS[id]).filter(Boolean);
-
-  return (
-    <ul className="journal-list">
-      {items.map((item) => (
-        <li key={item.id} className="journal-item">
-          <h4>{item.title}</h4>
-          <p>{item.text}</p>
-        </li>
-      ))}
-    </ul>
   );
 }
