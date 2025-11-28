@@ -1,23 +1,48 @@
 // src/App.jsx
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SCENES, computeMode } from "./data/index.js";
 import { StatsPanel } from "./components/StatsPanel.jsx";
 import { TabbedPanels } from "./components/TabbedPanels.jsx";
+import { RunSummary } from "./components/RunSummary.jsx";
 
 function findScene(id) {
   return SCENES.find((s) => s.id === id);
 }
 
 export default function App() {
-  const [currentSceneId, setCurrentSceneId] = useState("act3_start");
-
-  const [stats, setStats] = useState({
+  const initialStats = {
     trust: 60,
     jealousy: 15,
-    dependence: 20
+    dependence: 20,
+    reputation: 80
+  };
+
+  const [currentSceneId, setCurrentSceneId] = useState("act3_start");
+
+  const [stats, setStats] = useState(initialStats);
+
+  const [mode, setMode] = useState(computeMode(initialStats));
+
+  const [flags, setFlags] = useState({
+    hasStruckDesdemona: false,
+    followedCassioPath: false,
+    tookViolentBranch: false,
+    questionedIagoSeriously: false,
+    everChoseOpenHonestyWithDesdemona: false,
+    everActedWithSelfControlInPublic: false,
+    everChoseToDoubtIago: false
   });
 
-  const [mode, setMode] = useState(computeMode({ trust: 60, jealousy: 15 }));
+  const [counters, setCounters] = useState({
+    trustChoices: 0,
+    jealousyChoices: 0,
+    iagoChoices: 0,
+    violentChoices: 0,
+    totalChoices: 0,
+    modeCounts: { Resisting: 0, Torn: 0, Consumed: 0 }
+  });
+
+  const [history, setHistory] = useState([]);
 
   const [unlockedFeed, setUnlockedFeed] = useState([]);
   const [unlockedLogs, setUnlockedLogs] = useState([]);
@@ -28,8 +53,10 @@ export default function App() {
     [currentSceneId]
   );
 
-  // handle unlocks when entering a new scene
-  useMemo(() => {
+  const isEnding = currentScene?.type === "ending";
+
+  // Handle unlocks on scene enter
+  useEffect(() => {
     if (!currentScene) return;
 
     if (currentScene.unlockFeedOnEnter) {
@@ -60,20 +87,70 @@ export default function App() {
   function handleChoice(choice) {
     if (!choice) return;
 
+    const effects = choice.effects || {};
+
     const newStats = {
-      trust: clampStat(
-        (stats.trust ?? 0) + (choice.effects?.trust ?? 0)
-      ),
-      jealousy: clampStat(
-        (stats.jealousy ?? 0) + (choice.effects?.jealousy ?? 0)
-      ),
+      trust: clampStat((stats.trust ?? 0) + (effects.trust ?? 0)),
+      jealousy: clampStat((stats.jealousy ?? 0) + (effects.jealousy ?? 0)),
       dependence: clampStat(
-        (stats.dependence ?? 0) + (choice.effects?.dependence ?? 0)
+        (stats.dependence ?? 0) + (effects.dependence ?? 0)
+      ),
+      reputation: clampStat(
+        (stats.reputation ?? 0) + (effects.reputation ?? 0)
       )
     };
 
     const newMode = computeMode(newStats);
 
+    const tags = choice.tags || [];
+
+    // Update counters (modeCounts, tags)
+    setCounters((prev) => {
+      const newModeCounts = { ...prev.modeCounts };
+      newModeCounts[newMode] = (newModeCounts[newMode] ?? 0) + 1;
+
+      const updated = {
+        ...prev,
+        modeCounts: newModeCounts,
+        totalChoices: prev.totalChoices + 1
+      };
+
+      if (tags.includes("trust")) {
+        updated.trustChoices += 1;
+      }
+      if (tags.includes("jealous")) {
+        updated.jealousyChoices += 1;
+      }
+      if (tags.includes("iago")) {
+        updated.iagoChoices += 1;
+      }
+      if (tags.includes("violent")) {
+        updated.violentChoices += 1;
+      }
+
+      return updated;
+    });
+
+    // Update flags
+    if (choice.setFlags) {
+      setFlags((prev) => {
+        const updated = { ...prev };
+        for (const key of Object.keys(choice.setFlags)) {
+          if (choice.setFlags[key]) {
+            updated[key] = true;
+          }
+        }
+        return updated;
+      });
+    }
+
+    // Update history
+    setHistory((prev) => [
+      ...prev,
+      { sceneId: currentScene.id, choiceId: choice.id, tags }
+    ]);
+
+    // Unlock feed/log/journals from choice
     if (choice.unlockFeed) {
       addToUnlocked(choice.unlockFeed, setUnlockedFeed);
     }
@@ -90,10 +167,27 @@ export default function App() {
   }
 
   function restart() {
-    const baseStats = { trust: 60, jealousy: 15, dependence: 20 };
     setCurrentSceneId("act3_start");
-    setStats(baseStats);
-    setMode(computeMode(baseStats));
+    setStats(initialStats);
+    setMode(computeMode(initialStats));
+    setFlags({
+      hasStruckDesdemona: false,
+      followedCassioPath: false,
+      tookViolentBranch: false,
+      questionedIagoSeriously: false,
+      everChoseOpenHonestyWithDesdemona: false,
+      everActedWithSelfControlInPublic: false,
+      everChoseToDoubtIago: false
+    });
+    setCounters({
+      trustChoices: 0,
+      jealousyChoices: 0,
+      iagoChoices: 0,
+      violentChoices: 0,
+      totalChoices: 0,
+      modeCounts: { Resisting: 0, Torn: 0, Consumed: 0 }
+    });
+    setHistory([]);
     setUnlockedFeed([]);
     setUnlockedLogs([]);
     setUnlockedJournals([]);
@@ -107,23 +201,35 @@ export default function App() {
     );
   }
 
-  const isEnding = currentScene.type === "ending";
+  const sceneText = (() => {
+    if (!currentScene) return "";
+    // Priority: textByMode -> textIfStruck -> text
+    if (currentScene.textByMode && currentScene.textByMode[mode]) {
+      return currentScene.textByMode[mode];
+    }
+    if (currentScene.textIfStruck && flags.hasStruckDesdemona) {
+      return currentScene.textIfStruck;
+    }
+    return currentScene.text;
+  })();
 
   return (
     <div className="app-root">
       <header className="app-header">
-        <h1>Othello Interactive Narrative Engine</h1>
+        <h1>Othello – Interactive Folio</h1>
         <p className="subtitle">
-          Explore how jealousy, trust, and manipulation reshape the tragedy.
+          A two-page manuscript that lets you rewrite the path of jealousy,
+          trust, and manipulation.
         </p>
       </header>
 
-      <div className="layout">
+      <div className="layout book-layout">
+        {/* LEFT PAGE – play text + choices */}
         <main className="main-panel">
-          <section className="scene-card">
+          <section className="scene-card page-left">
             <h2>{currentScene.title}</h2>
             {isEnding && <p className="ending-label">Ending</p>}
-            <p className="scene-text">{currentScene.text}</p>
+            <p className="scene-text">{sceneText}</p>
 
             {!isEnding && (
               <>
@@ -142,28 +248,36 @@ export default function App() {
             {isEnding && (
               <div className="ending-actions">
                 <button onClick={restart} className="primary-button">
-                  Restart from Act 3
+                  Begin Again from Act 3
                 </button>
               </div>
             )}
           </section>
         </main>
 
+        {/* RIGHT PAGE – marginalia / notes */}
         <aside className="side-panel">
-          <StatsPanel stats={stats} mode={mode} />
-          <TabbedPanels
-            unlockedFeed={unlockedFeed}
-            unlockedLogs={unlockedLogs}
-            unlockedJournals={unlockedJournals}
-          />
+          <section className="notes-card page-right">
+            <StatsPanel stats={stats} mode={mode} />
+            <TabbedPanels
+              unlockedFeed={unlockedFeed}
+              unlockedLogs={unlockedLogs}
+              unlockedJournals={unlockedJournals}
+              stats={stats}
+              flags={flags}
+            />
+            {isEnding && (
+              <RunSummary stats={stats} flags={flags} counters={counters} />
+            )}
+          </section>
         </aside>
       </div>
 
       <footer className="app-footer">
         <p>
           Based on William Shakespeare&apos;s <em>Othello</em>. This interactive
-          adaptation was created as a creative project to explore theme and
-          character.
+          folio models how small choices in trust, jealousy, and dependence
+          reshape the tragedy.
         </p>
       </footer>
     </div>

@@ -7,6 +7,7 @@ export function StatsPanel({ stats, mode }) {
       <StatBar label="Trust in Desdemona" value={stats.trust} />
       <StatBar label="Jealousy" value={stats.jealousy} />
       <StatBar label="Dependence on Iago" value={stats.dependence} />
+      <StatBar label="Public Reputation" value={stats.reputation} />
       <p className="mode-text">
         Mode: <strong>{mode}</strong>
       </p>
