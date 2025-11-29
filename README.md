@@ -1,16 +1,167 @@
-# React + Vite
+# 📜 *Othello: Interactive Manuscript*
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### An Interactive Narrative Experience Inspired by Shakespeare’s *Othello*
 
-Currently, two official plugins are available:
+A fully original **ENG4U Creative Task** reimagining Shakespeare’s *Othello* as a modern interactive manuscript blending story, emotional simulation, and character-perspective documents.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Built using **React**, **Vite**, and deployed via **Vercel**.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ⭐ Overview
 
-## Expanding the ESLint configuration
+**Othello: Interactive Manuscript** is a story-driven, choice-based interactive web experience that explores the psychological unraveling of Othello through:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* A **branching narrative** based on user decisions
+* A dynamic **emotional stat simulation** (Jealousy, Trust, Dependence)
+* **Iago’s Deception Logs**
+* **Desdemona’s Private Journals**
+* A fictional **Social Feed** reflecting public perception
+
+The project presents the tragedy through a **manuscript-style UI**, creating an immersive 1600s aesthetic while still allowing modern user interactivity.
+
+This work fulfills the requirements of the **ENG4U Creative Shakespeare Task**, demonstrating creative reinterpretation, understanding of themes, and technical execution.
+
+---
+
+## 🎭 Features
+
+### 🧠 **Branching Interactive Narrative**
+
+* 20+ scenes (macro + micro choices)
+* Multiple unique paths and outcomes
+* Logical state-driven branching (flags + emotional scores)
+
+---
+
+### 💔 **Emotional Simulation System**
+
+Your choices influence three emotional metrics:
+
+| Stat           | Description                                        |
+| -------------- | -------------------------------------------------- |
+| **Jealousy**   | Measures Othello’s rising suspicion and insecurity |
+| **Trust**      | His belief in Desdemona, Cassio, and himself       |
+| **Dependence** | His emotional reliance on Iago                     |
+
+Final endings are determined by statistical thresholds + triggered narrative flags.
+
+---
+
+### 📜 **Authentic Manuscript Aesthetic**
+
+* Custom parchment-styled layout
+* Medieval serif typography
+* Subtle page-fade transitions
+* Handwritten-style accents
+* Thin parchment-colored scrollbars
+* Feather/quill favicon
+
+---
+
+### 🗂️ **Three Integrated Story Panels**
+
+1. **📣 Social Feed**
+
+   * Public rumours, soldiers’ comments, and gossip
+   * Unlocks dynamically based on your choices
+
+2. **🩸 Iago’s Logs**
+
+   * His private manipulation notes
+   * Updates when new schemes unfold
+
+3. **🌸 Desdemona’s Journal**
+
+   * Personal thoughts and emotional reflections
+   * Gives meta-perspective on the relationship
+
+---
+
+### 🔔 **Interactive Notification System**
+
+* Global notification bell
+* Per-tab unread badges
+* Per-item “unread” dot indicators
+* Auto-scroll to newly unlocked items
+* Item highlight animation
+* Dismissable notifications
+
+---
+
+### ✨ **Smooth UX Enhancements**
+
+* Fade-in scene transitions
+* Animations for new logs/journals/feed items
+* Clean scroll behavior
+* Elegant tab interactions
+
+---
+
+## 🧩 Tech Stack
+
+* **React 18**
+* **Vite**
+* **JavaScript (ES2022)**
+* **Vercel Deployment**
+* **Vercel Speed Insights + Web Analytics**
+* CSS-based animations
+
+---
+
+## 🚀 Running the Project Locally
+
+```bash
+npm install
+npm run dev
+```
+
+Open:
+`http://localhost:5173/`
+
+---
+
+## 🌐 Deployment
+
+Live deployment handled via **Vercel**.
+Includes:
+
+* Speed Insights
+* Web Analytics
+* Custom project domain
+* Automatic production builds
+
+---
+
+## 🖼️ Screenshots
+
+![Welcome Page](public/screenshots/welcome.png)
+![Interactive Scene](public/screenshots/scene.png)
+
+---
+
+## 📚 Educational Purpose
+
+This project was created as part of the **ENG4U: Grade 12 English** curriculum.
+It serves as:
+
+* A creative reinterpretation of Shakespeare’s *Othello*
+* A demonstration of deep character understanding
+* A multi-modal literary and technical artifact
+* A modern engagement with classical text themes
+
+---
+
+## 👤 Author
+
+**Taheem**
+Grade 12 • ENG4U Creative Task
+Built with React + Vite + Vercel
+
+---
+
+## 📄 License
+
+This project is intended for educational use.
+
+---
