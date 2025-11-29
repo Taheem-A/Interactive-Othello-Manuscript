@@ -69,6 +69,12 @@ export default function App() {
     [currentSceneId]
   );
 
+  useEffect(() => {
+    if (!hasStarted) return;
+    if (!currentScene) return;
+    document.title = `${currentScene.title} – Othello: Interactive Manuscript`;
+  }, [currentScene, hasStarted]);
+
   // Helper to build a human-readable message for notifications
   function buildNotificationMessage(type, id) {
     if (type === "feed") {
