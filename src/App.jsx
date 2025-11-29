@@ -7,6 +7,9 @@ import { RunSummary } from "./components/RunSummary.jsx";
 import { WelcomeScreen } from "./components/WelcomeScreen.jsx";
 import { NotificationCenter } from "./components/NotificationCenter.jsx";
 
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
+
 function findScene(id) {
   return SCENES.find((s) => s.id === id);
 }
@@ -436,6 +439,9 @@ function handleDismissNotification(id) {
           character.
         </p>
       </footer>
+      {/* Web Analytics and Speed Insights */}
+      <Analytics />
+      <SpeedInsights />
     </div>
   );
 }
