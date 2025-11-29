@@ -51,6 +51,17 @@ body {
   text-shadow: 0 1px 0 #fdf6ea;
 }
 
+.app-header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.app-header-text {
+  flex: 1;
+}
+
 .subtitle {
   margin-top: 0.45rem;
   font-size: 0.9rem;
@@ -430,6 +441,66 @@ body {
   transform: translateY(-1px);
 }
 
+.tab-button-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Floating badge on the top-right of each tab */
+.tab-badge-floating {
+  position: absolute;
+  top: -0.4rem;
+  right: -0.2rem;
+  min-width: 1.1rem;
+  height: 1.1rem;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  background: #7a1e26;
+  color: #fdf6ea;
+  font-size: 0.68rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+
+  opacity: 0;
+  transform: scale(0.7) translateY(-2px);
+  transition:
+    opacity 0.26s ease,
+    transform 0.18s ease;
+}
+
+
+/* Visible state: fades / pops in, fades out when class is removed */
+.tab-badge-floating.visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+@keyframes tabBadgePop {
+  from {
+    opacity: 0;
+    transform: scale(0.7) translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes tabBadgeFade {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
 .tabs-body {
   max-height: 330px;
   overflow-y: auto;
@@ -463,6 +534,84 @@ body {
   padding: 0.5rem 0.55rem;
   border: 1px solid rgba(170, 133, 88, 0.7);
   box-shadow: 0 3px 7px rgba(0, 0, 0, 0.08);
+}
+
+/* Shared header for log/journal/feed items */
+.item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Wrap heading text so we can slide it */
+.item-header-text {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Base state: dot exists but takes NO horizontal space */
+.item-dot {
+  width: 0;
+  height: 0;
+  border-radius: 999px;
+  background: #7a1e26;
+  box-shadow: 0 0 0 1px #fdf6ea;
+  flex-shrink: 0;
+  opacity: 0;
+  margin-right: 0;
+  transform: scale(0.3) translateX(-10px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    width 0.2s ease,
+    height 0.2s ease,
+    margin-right 0.2s ease;
+}
+
+/* Unread: dot expands, becomes visible, and pushes the title right */
+.item-dot.visible {
+  width: 0.48rem;
+  height: 0.48rem;
+  opacity: 1;
+  margin-right: 0.3rem;
+  transform: scale(1) translateX(0);
+}
+
+/* Titles slide slightly when unread to make room for the dot */
+.log-item h4,
+.journal-item h4,
+.feed-author {
+  transition: transform 0.2s ease, margin-left 0.2s ease;
+}
+
+
+/* When unread, card background is a bit lighter and text indented slightly */
+.feed-item.unread,
+.log-item.unread,
+.journal-item.unread {
+  background: #fff7e9;
+  transition: background-color 0.25s ease,
+    transform 0.15s ease,
+    box-shadow 0.18s ease;
+}
+
+/* Slight lift on hover for interactivity */
+.feed-item.unread:hover,
+.log-item.unread:hover,
+.journal-item.unread:hover {
+  cursor: pointer;
+}
+
+/* Animation for dot appearing */
+@keyframes itemDotPop {
+  from {
+    opacity: 0;
+    transform: scale(0.4) translateX(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+  }
 }
 
 .feed-author {
@@ -597,6 +746,182 @@ body {
   text-align: center;
   font-size: 0.8rem;
   color: #8e6a47;
+}
+
+/* Notification center (bell + dropdown panel) */
+
+.notification-wrapper {
+  position: relative;
+}
+
+.notification-bell {
+  position: relative;
+  border: 1px solid rgba(153, 115, 75, 0.7);
+  border-radius: 999px;
+  background: #f6ebdb;
+  padding: 0.2rem 0.55rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.1s ease,
+    box-shadow 0.15s ease;
+}
+
+.notification-bell:hover {
+  background: #f0dfc3;
+  border-color: rgba(123, 68, 33, 0.9);
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.notification-bell-icon {
+  font-size: 1.1rem;
+}
+
+/* Tiny red dot on the bell when there are unread notifications */
+.notification-bell-dot {
+  position: absolute;
+  top: 0;
+  right: 0.1rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: #7a1e26;
+  box-shadow: 0 0 0 1px #fdf6ea;
+  animation: bellDotPop 0.18s ease-out;
+}
+
+.notification-bell-unread {
+  /* slight style hint */
+  border-color: rgba(123, 68, 33, 0.95);
+}
+
+/* Panel that drops down under the bell */
+.notification-panel {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  width: 270px;
+  max-height: 260px;
+  background: #fdf6ea;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(165, 132, 92, 0.9);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.3);
+  padding: 0.55rem 0.6rem 0.6rem 0.6rem;
+  z-index: 20;
+  animation: notificationPanelIn 0.2s ease-out;
+}
+
+.notification-panel-header {
+  border-bottom: 1px solid rgba(170, 133, 88, 0.6);
+  padding-bottom: 0.25rem;
+  margin-bottom: 0.35rem;
+}
+
+.notification-panel-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  font-family: "Georgia", "Times New Roman", serif;
+  color: #3a2216;
+}
+
+.notification-empty {
+  margin: 0.3rem 0 0 0;
+  font-size: 0.82rem;
+  color: #7f5e3f;
+}
+
+.notification-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.notification-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: #3f2818;
+}
+
+.notification-item-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+
+.notification-message {
+  line-height: 1.35;
+}
+
+/* Type label pill inside the notification */
+.notification-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.06rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border: 1px solid rgba(153, 115, 75, 0.8);
+  background: #f3e2c9;
+  color: #5b341f;
+}
+
+.notification-pill.type-log {
+  border-color: rgba(123, 68, 33, 0.9);
+  background: #f9dec7;
+}
+
+.notification-pill.type-journal {
+  border-color: #7a1e26;
+  background: #f9e1d8;
+}
+
+.notification-pill.type-feed {
+  border-color: rgba(153, 115, 75, 0.9);
+  background: #f2e0bc;
+}
+
+.notification-time {
+  font-size: 0.72rem;
+  color: #a17c58;
+  white-space: nowrap;
+}
+
+/* Animations */
+
+@keyframes bellDotPop {
+  from {
+    opacity: 0;
+    transform: scale(0.4) translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes notificationPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Animations */

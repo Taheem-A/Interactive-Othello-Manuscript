@@ -1,5 +1,4 @@
 // src/components/TabbedPanels.jsx
-
 import { useState } from "react";
 import { FEED_ITEMS, LOG_ITEMS, JOURNAL_ITEMS } from "../data/index.js";
 
@@ -8,48 +7,109 @@ export function TabbedPanels({
   unlockedLogs,
   unlockedJournals,
   stats,
-  flags
+  flags,
+  readFeed,
+  readLogs,
+  readJournals,
+  onReadFeed,
+  onReadLog,
+  onReadJournal
 }) {
   const [activeTab, setActiveTab] = useState("feed");
+
+  const unreadFeedCount = unlockedFeed.filter(
+    (id) => !readFeed.includes(id)
+  ).length;
+  const unreadLogCount = unlockedLogs.filter(
+    (id) => !readLogs.includes(id)
+  ).length;
+  const unreadJournalCount = unlockedJournals.filter(
+    (id) => !readJournals.includes(id)
+  ).length;
 
   return (
     <section className="tabs-card">
       <div className="tabs-header">
-        <button
-          className={
-            activeTab === "feed" ? "tab-button active" : "tab-button"
-          }
-          onClick={() => setActiveTab("feed")}
-        >
-          Social Feed
-        </button>
-        <button
-          className={
-            activeTab === "logs" ? "tab-button active" : "tab-button"
-          }
-          onClick={() => setActiveTab("logs")}
-        >
-          Iago&apos;s Logs
-        </button>
-        <button
-          className={
-            activeTab === "journals" ? "tab-button active" : "tab-button"
-          }
-          onClick={() => setActiveTab("journals")}
-        >
-          Desdemona&apos;s Journals
-        </button>
+        <div className="tab-button-wrapper">
+          <button
+            className={
+              activeTab === "feed" ? "tab-button active" : "tab-button"
+            }
+            onClick={() => setActiveTab("feed")}
+          >
+            Social Feed
+          </button>
+          <span
+            className={
+              "tab-badge-floating " + (unreadFeedCount > 0 ? "visible" : "")
+            }
+          >
+            {unreadFeedCount > 0 ? unreadFeedCount : ""}
+          </span>
+        </div>
+
+        <div className="tab-button-wrapper">
+          <button
+            className={
+              activeTab === "logs" ? "tab-button active" : "tab-button"
+            }
+            onClick={() => setActiveTab("logs")}
+          >
+            Iago&apos;s Logs
+          </button>
+          <span
+            className={
+              "tab-badge-floating " + (unreadLogCount > 0 ? "visible" : "")
+            }
+          >
+            {unreadLogCount > 0 ? unreadLogCount : ""}
+          </span>
+        </div>
+
+        <div className="tab-button-wrapper">
+          <button
+            className={
+              activeTab === "journals" ? "tab-button active" : "tab-button"
+            }
+            onClick={() => setActiveTab("journals")}
+          >
+            Desdemona&apos;s Journals
+          </button>
+          <span
+            className={
+              "tab-badge-floating " + (unreadJournalCount > 0 ? "visible" : "")
+            }
+          >
+            {unreadJournalCount > 0 ? unreadJournalCount : ""}
+          </span>
+        </div>
       </div>
 
       <div className="tabs-body">
         {activeTab === "feed" && (
-          <FeedPanel unlockedIds={unlockedFeed} stats={stats} flags={flags} />
+          <FeedPanel
+            unlockedIds={unlockedFeed}
+            stats={stats}
+            flags={flags}
+            readFeed={readFeed}
+            onReadFeed={onReadFeed}
+          />
         )}
         {activeTab === "logs" && (
-          <LogsPanel unlockedIds={unlockedLogs} flags={flags} />
+          <LogsPanel
+            unlockedIds={unlockedLogs}
+            flags={flags}
+            readLogs={readLogs}
+            onReadLog={onReadLog}
+          />
         )}
         {activeTab === "journals" && (
-          <JournalsPanel unlockedIds={unlockedJournals} flags={flags} />
+          <JournalsPanel
+            unlockedIds={unlockedJournals}
+            flags={flags}
+            readJournals={readJournals}
+            onReadJournal={onReadJournal}
+          />
         )}
       </div>
     </section>
@@ -57,9 +117,7 @@ export function TabbedPanels({
 }
 
 function getFeedText(item, stats, flags) {
-  // Simple helper to pick variants when available
   if (item.text) return item.text;
-
   if (!item.baseText) return "";
 
   const rep = stats.reputation ?? 50;
@@ -73,11 +131,10 @@ function getFeedText(item, stats, flags) {
     return item.sympatheticVariant;
   }
 
-  // Default to baseText
   return item.baseText;
 }
 
-function FeedPanel({ unlockedIds, stats, flags }) {
+function FeedPanel({ unlockedIds, stats, flags, readFeed, onReadFeed }) {
   if (!unlockedIds.length) {
     return <p className="muted-text">No public rumours yet.</p>;
   }
@@ -89,18 +146,30 @@ function FeedPanel({ unlockedIds, stats, flags }) {
 
   return (
     <ul className="feed-list">
-      {items.map((item) => (
-        <li key={item.id} className="feed-item">
-          <div className="feed-author">{item.author}</div>
-          <div className="feed-act">{item.act}</div>
-          <p className="feed-text">{getFeedText(item, stats, flags)}</p>
-        </li>
-      ))}
+      {items.map((item) => {
+        const isUnread = !readFeed.includes(item.id);
+        return (
+          <li
+            key={item.id}
+            className={`feed-item ${isUnread ? "unread" : ""}`}
+            onClick={() => onReadFeed(item.id)}
+          >
+            <div className="item-header">
+              <span className={`item-dot ${isUnread ? "visible" : ""}`} />
+              <div className="item-header-text">
+                <div className="feed-author">{item.author}</div>
+                <div className="feed-act">{item.act}</div>
+              </div>
+            </div>
+            <p className="feed-text">{getFeedText(item, stats, flags)}</p>
+          </li>
+        );
+      })}
     </ul>
   );
 }
 
-function LogsPanel({ unlockedIds, flags }) {
+function LogsPanel({ unlockedIds, flags, readLogs, onReadLog }) {
   if (!unlockedIds.length) {
     return (
       <p className="muted-text">
@@ -122,9 +191,19 @@ function LogsPanel({ unlockedIds, flags }) {
             text = item.bitterVariant;
           }
         }
+
+        const isUnread = !readLogs.includes(item.id);
+
         return (
-          <li key={item.id} className="log-item">
-            <h4>{item.title}</h4>
+          <li
+            key={item.id}
+            className={`log-item ${isUnread ? "unread" : ""}`}
+            onClick={() => onReadLog(item.id)}
+          >
+            <div className="item-header">
+              <span className={`item-dot ${isUnread ? "visible" : ""}`} />
+              <h4>{item.title}</h4>
+            </div>
             <p>{text}</p>
           </li>
         );
@@ -133,7 +212,12 @@ function LogsPanel({ unlockedIds, flags }) {
   );
 }
 
-function JournalsPanel({ unlockedIds, flags }) {
+function JournalsPanel({
+  unlockedIds,
+  flags,
+  readJournals,
+  onReadJournal
+}) {
   if (!unlockedIds.length) {
     return (
       <p className="muted-text">
@@ -165,9 +249,18 @@ function JournalsPanel({ unlockedIds, flags }) {
           }
         }
 
+        const isUnread = !readJournals.includes(item.id);
+
         return (
-          <li key={item.id} className="journal-item">
-            <h4>{item.title}</h4>
+          <li
+            key={item.id}
+            className={`journal-item ${isUnread ? "unread" : ""}`}
+            onClick={() => onReadJournal(item.id)}
+          >
+            <div className="item-header">
+              <span className={`item-dot ${isUnread ? "visible" : ""}`} />
+              <h4>{item.title}</h4>
+            </div>
             <p>{text}</p>
           </li>
         );

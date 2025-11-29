@@ -1,10 +1,11 @@
 // src/App.jsx
 import { useEffect, useMemo, useState } from "react";
-import { SCENES, computeMode } from "./data/index.js";
+import { SCENES, computeMode, FEED_ITEMS, LOG_ITEMS, JOURNAL_ITEMS } from "./data/index.js";
 import { StatsPanel } from "./components/StatsPanel.jsx";
 import { TabbedPanels } from "./components/TabbedPanels.jsx";
 import { RunSummary } from "./components/RunSummary.jsx";
 import { WelcomeScreen } from "./components/WelcomeScreen.jsx";
+import { NotificationCenter } from "./components/NotificationCenter.jsx";
 
 function findScene(id) {
   return SCENES.find((s) => s.id === id);
@@ -18,7 +19,7 @@ export default function App() {
     reputation: 80
   };
 
-  // NEW: show welcome page first
+  // Show welcome page first
   const [hasStarted, setHasStarted] = useState(false);
 
   const [currentSceneId, setCurrentSceneId] = useState("act3_start");
@@ -51,37 +52,96 @@ export default function App() {
   const [unlockedLogs, setUnlockedLogs] = useState([]);
   const [unlockedJournals, setUnlockedJournals] = useState([]);
 
-  // which items have been read
+  // Which items have been read (for dots + tab badges)
+  const [readFeed, setReadFeed] = useState([]);
   const [readLogs, setReadLogs] = useState([]);
   const [readJournals, setReadJournals] = useState([]);
+
+  // Notification center
+  const [notifications, setNotifications] = useState([]);
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
 
   const currentScene = useMemo(
     () => findScene(currentSceneId),
     [currentSceneId]
   );
 
-  // Handle unlocks on scene enter
+  // Helper to build a human-readable message for notifications
+  function buildNotificationMessage(type, id) {
+    if (type === "feed") {
+      const item = FEED_ITEMS[id];
+      if (!item) return "Social feed has been updated.";
+      return `New social post by ${item.author} (${item.act}).`;
+    }
+    if (type === "log") {
+      const item = LOG_ITEMS[id];
+      if (!item) return "New private log from Iago.";
+      return `New Iago log: “${item.title}”.`;
+    }
+    if (type === "journal") {
+      const item = JOURNAL_ITEMS[id];
+      if (!item) return "New journal entry from Desdemona.";
+      return `New journal from Desdemona: “${item.title}”.`;
+    }
+    return "New event unlocked.";
+  }
+
+  function pushNotifications(type, ids) {
+    if (!ids || !ids.length) return;
+    const now = new Date();
+    const timeLabel = now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+    setNotifications((prev) => [
+      ...prev,
+      ...ids.map((id) => ({
+        id: `${type}-${id}-${now.getTime()}-${Math.random()
+          .toString(36)
+          .slice(2, 7)}`,
+        type,
+        itemId: id,
+        message: buildNotificationMessage(type, id),
+        timeLabel
+      }))
+    ]);
+    setHasUnreadNotifications(true);
+  }
+
+  // Handle unlocks on scene enter (with notifications)
   useEffect(() => {
     if (!currentScene) return;
 
     if (currentScene.unlockFeedOnEnter) {
-      addToUnlocked(currentScene.unlockFeedOnEnter, setUnlockedFeed);
+      const newIds = currentScene.unlockFeedOnEnter.filter(
+        (id) => !unlockedFeed.includes(id)
+      );
+      if (newIds.length) {
+        setUnlockedFeed([...unlockedFeed, ...newIds]);
+        pushNotifications("feed", newIds);
+      }
     }
     if (currentScene.unlockLogsOnEnter) {
-      addToUnlocked(currentScene.unlockLogsOnEnter, setUnlockedLogs);
+      const newIds = currentScene.unlockLogsOnEnter.filter(
+        (id) => !unlockedLogs.includes(id)
+      );
+      if (newIds.length) {
+        setUnlockedLogs([...unlockedLogs, ...newIds]);
+        pushNotifications("log", newIds);
+      }
     }
     if (currentScene.unlockJournalsOnEnter) {
-      addToUnlocked(currentScene.unlockJournalsOnEnter, setUnlockedJournals);
+      const newIds = currentScene.unlockJournalsOnEnter.filter(
+        (id) => !unlockedJournals.includes(id)
+      );
+      if (newIds.length) {
+        setUnlockedJournals([...unlockedJournals, ...newIds]);
+        pushNotifications("journal", newIds);
+      }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentScene]);
-
-  function addToUnlocked(ids, setter) {
-    setter((prev) => {
-      const set = new Set(prev);
-      ids.forEach((id) => set.add(id));
-      return Array.from(set);
-    });
-  }
 
   function clampStat(n) {
     if (n < 0) return 0;
@@ -143,21 +203,43 @@ export default function App() {
       { sceneId: currentScene.id, choiceId: choice.id, tags }
     ]);
 
+    // Handle unlocks from this choice (with notifications)
     if (choice.unlockFeed) {
-      addToUnlocked(choice.unlockFeed, setUnlockedFeed);
+      const newIds = choice.unlockFeed.filter(
+        (id) => !unlockedFeed.includes(id)
+      );
+      if (newIds.length) {
+        setUnlockedFeed([...unlockedFeed, ...newIds]);
+        pushNotifications("feed", newIds);
+      }
     }
     if (choice.unlockLogs) {
-      addToUnlocked(choice.unlockLogs, setUnlockedLogs);
-      // new logs start as unread
+      const newIds = choice.unlockLogs.filter(
+        (id) => !unlockedLogs.includes(id)
+      );
+      if (newIds.length) {
+        setUnlockedLogs([...unlockedLogs, ...newIds]);
+        pushNotifications("log", newIds);
+      }
     }
     if (choice.unlockJournals) {
-      addToUnlocked(choice.unlockJournals, setUnlockedJournals);
-      // new journals start as unread
+      const newIds = choice.unlockJournals.filter(
+        (id) => !unlockedJournals.includes(id)
+      );
+      if (newIds.length) {
+        setUnlockedJournals([...unlockedJournals, ...newIds]);
+        pushNotifications("journal", newIds);
+      }
     }
 
     setStats(newStats);
     setMode(newMode);
     setCurrentSceneId(choice.nextScene);
+  }
+
+  // Mark items as read (for dots + tab badges)
+  function handleReadFeed(id) {
+    setReadFeed((prev) => (prev.includes(id) ? prev : [...prev, id]));
   }
 
   function handleReadLog(id) {
@@ -166,6 +248,11 @@ export default function App() {
 
   function handleReadJournal(id) {
     setReadJournals((prev) => (prev.includes(id) ? prev : [...prev, id]));
+  }
+
+  // When the notification center is opened, clear the bell's unread dot
+  function handleOpenNotificationCenter() {
+    setHasUnreadNotifications(false);
   }
 
   function restart() {
@@ -193,13 +280,12 @@ export default function App() {
     setUnlockedFeed([]);
     setUnlockedLogs([]);
     setUnlockedJournals([]);
+    setReadFeed([]);
     setReadLogs([]);
     setReadJournals([]);
-    // we do NOT reset hasStarted here; once they open the manuscript,
-    // restart just restarts Act III from inside it.
+    // We intentionally keep notifications history; it's the "record"
   }
 
-  // If we somehow don't find the scene
   if (!currentScene) {
     return (
       <div className="app-root">
@@ -221,7 +307,7 @@ export default function App() {
     return currentScene.text;
   })();
 
-  // 👉 Show welcome page first
+  // Show welcome page first
   if (!hasStarted) {
     return (
       <div className="app-root">
@@ -230,14 +316,22 @@ export default function App() {
     );
   }
 
-  // 👉 Once started, show the main two-page layout
   return (
     <div className="app-root">
       <header className="app-header">
-        <h1>Othello Interactive Narrative Engine</h1>
-        <p className="subtitle">
-          Explore how jealousy, trust, and manipulation reshape the tragedy.
-        </p>
+        <div className="app-header-inner">
+          <div className="app-header-text">
+            <h1>Othello Interactive Narrative Engine</h1>
+            <p className="subtitle">
+              Explore how jealousy, trust, and manipulation reshape the tragedy.
+            </p>
+          </div>
+          <NotificationCenter
+            notifications={notifications}
+            hasUnread={hasUnreadNotifications}
+            onOpenCenter={handleOpenNotificationCenter}
+          />
+        </div>
       </header>
 
       <div className="layout">
@@ -285,8 +379,10 @@ export default function App() {
             unlockedJournals={unlockedJournals}
             stats={stats}
             flags={flags}
+            readFeed={readFeed}
             readLogs={readLogs}
             readJournals={readJournals}
+            onReadFeed={handleReadFeed}
             onReadLog={handleReadLog}
             onReadJournal={handleReadJournal}
           />
