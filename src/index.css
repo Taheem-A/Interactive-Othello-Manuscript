@@ -1,3 +1,41 @@
+/* ============================================
+   GLOBAL SCROLLBAR — ALWAYS VISIBLE
+   Parchment-themed styling
+   ============================================ */
+
+/* Firefox */
+html, body {
+  scrollbar-width: thin;
+  scrollbar-color: #a6845a #f3ead9;   /* thumb color, track color */
+}
+
+/* Chrome, Safari, Edge */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 8px;               /* Thickness */
+  background: #f3ead9;      /* Track background (parchment) */
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: #f3ead9;      /* Light parchment track */
+  border-left: 1px solid #d2c1a5;   /* Subtle carved border */
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background: #b38a5d;      /* Warm parchment-brown thumb */
+  border-radius: 10px;
+  border: 1px solid #e8d9bc;
+  transition: background 0.2s ease;
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+  background: #8c6b43;      /* Slightly darker on hover */
+}
+
+
 :root {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
@@ -300,6 +338,22 @@ body {
 }
 
 /* Scene page (left) */
+
+/* Fade/slide transition when switching scenes */
+.fade-scene {
+  animation: fadeSceneIn 0.35s ease-out;
+}
+
+@keyframes fadeSceneIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 .scene-card h2 {
   margin: 0;
@@ -996,4 +1050,68 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* =========================================================
+   SCROLLBARS — OPTION 3 (hidden, appear on hover)
+   ========================================================= */
+
+/* Apply same behavior to all scrollable panels */
+.tabs-body,
+.feed-list,
+.log-list,
+.journal-list {
+  scrollbar-width: none;   /* Firefox: hide by default */
+  overflow-y: auto;
+  position: relative;
+}
+
+/* WebKit browsers: hide scrollbar by default */
+.tabs-body::-webkit-scrollbar,
+.feed-list::-webkit-scrollbar,
+.log-list::-webkit-scrollbar,
+.journal-list::-webkit-scrollbar,
+.notification-list::-webkit-scrollbar {
+  width: 6px;
+  background: transparent; 
+}
+
+/* Hide thumb by default */
+.tabs-body::-webkit-scrollbar-thumb,
+.feed-list::-webkit-scrollbar-thumb,
+.log-list::-webkit-scrollbar-thumb,
+.journal-list::-webkit-scrollbar-thumb,
+.notification-list::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 10px;
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+/* When user hovers over the panel, scrollbar appears */
+.tabs-body:hover::-webkit-scrollbar-thumb,
+.feed-list:hover::-webkit-scrollbar-thumb,
+.log-list:hover::-webkit-scrollbar-thumb,
+.journal-list:hover::-webkit-scrollbar-thumb,
+.notification-list:hover::-webkit-scrollbar-thumb {
+  background: #a6845a;         /* warm parchment-brown */
+  opacity: 0.8;
+}
+
+/* Slightly darker on hover of the thumb itself */
+.tabs-body:hover::-webkit-scrollbar-thumb:hover,
+.feed-list:hover::-webkit-scrollbar-thumb:hover,
+.log-list:hover::-webkit-scrollbar-thumb:hover,
+.journal-list:hover::-webkit-scrollbar-thumb:hover,
+.notification-list:hover::-webkit-scrollbar:hover {
+  background: #8c6b43;
+}
+
+/* Firefox version: scrollbars appear only on hover */
+.tabs-body:hover,
+.feed-list:hover,
+.log-list:hover,
+.journal-list:hover,
+.notification-list:hover {
+  scrollbar-width: thin;
+  scrollbar-color: #a6845a transparent;
 }

@@ -367,7 +367,7 @@ function handleDismissNotification(id) {
 
       <div className="layout">
         <main className="main-panel">
-          <section className="scene-card">
+          <section key={currentSceneId} className="scene-card fade-scene">
             <h2>{currentScene.title}</h2>
             {isEnding && <p className="ending-label">Ending</p>}
             <p className="scene-text">{sceneText}</p>
