@@ -4,6 +4,7 @@ import { SCENES, computeMode } from "./data/index.js";
 import { StatsPanel } from "./components/StatsPanel.jsx";
 import { TabbedPanels } from "./components/TabbedPanels.jsx";
 import { RunSummary } from "./components/RunSummary.jsx";
+import { WelcomeScreen } from "./components/WelcomeScreen.jsx";
 
 function findScene(id) {
   return SCENES.find((s) => s.id === id);
@@ -17,10 +18,12 @@ export default function App() {
     reputation: 80
   };
 
+  // NEW: show welcome page first
+  const [hasStarted, setHasStarted] = useState(false);
+
   const [currentSceneId, setCurrentSceneId] = useState("act3_start");
 
   const [stats, setStats] = useState(initialStats);
-
   const [mode, setMode] = useState(computeMode(initialStats));
 
   const [flags, setFlags] = useState({
@@ -48,12 +51,14 @@ export default function App() {
   const [unlockedLogs, setUnlockedLogs] = useState([]);
   const [unlockedJournals, setUnlockedJournals] = useState([]);
 
+  // which items have been read
+  const [readLogs, setReadLogs] = useState([]);
+  const [readJournals, setReadJournals] = useState([]);
+
   const currentScene = useMemo(
     () => findScene(currentSceneId),
     [currentSceneId]
   );
-
-  const isEnding = currentScene?.type === "ending";
 
   // Handle unlocks on scene enter
   useEffect(() => {
@@ -101,10 +106,8 @@ export default function App() {
     };
 
     const newMode = computeMode(newStats);
-
     const tags = choice.tags || [];
 
-    // Update counters (modeCounts, tags)
     setCounters((prev) => {
       const newModeCounts = { ...prev.modeCounts };
       newModeCounts[newMode] = (newModeCounts[newMode] ?? 0) + 1;
@@ -115,23 +118,14 @@ export default function App() {
         totalChoices: prev.totalChoices + 1
       };
 
-      if (tags.includes("trust")) {
-        updated.trustChoices += 1;
-      }
-      if (tags.includes("jealous")) {
-        updated.jealousyChoices += 1;
-      }
-      if (tags.includes("iago")) {
-        updated.iagoChoices += 1;
-      }
-      if (tags.includes("violent")) {
-        updated.violentChoices += 1;
-      }
+      if (tags.includes("trust")) updated.trustChoices += 1;
+      if (tags.includes("jealous")) updated.jealousyChoices += 1;
+      if (tags.includes("iago")) updated.iagoChoices += 1;
+      if (tags.includes("violent")) updated.violentChoices += 1;
 
       return updated;
     });
 
-    // Update flags
     if (choice.setFlags) {
       setFlags((prev) => {
         const updated = { ...prev };
@@ -144,26 +138,34 @@ export default function App() {
       });
     }
 
-    // Update history
     setHistory((prev) => [
       ...prev,
       { sceneId: currentScene.id, choiceId: choice.id, tags }
     ]);
 
-    // Unlock feed/log/journals from choice
     if (choice.unlockFeed) {
       addToUnlocked(choice.unlockFeed, setUnlockedFeed);
     }
     if (choice.unlockLogs) {
       addToUnlocked(choice.unlockLogs, setUnlockedLogs);
+      // new logs start as unread
     }
     if (choice.unlockJournals) {
       addToUnlocked(choice.unlockJournals, setUnlockedJournals);
+      // new journals start as unread
     }
 
     setStats(newStats);
     setMode(newMode);
     setCurrentSceneId(choice.nextScene);
+  }
+
+  function handleReadLog(id) {
+    setReadLogs((prev) => (prev.includes(id) ? prev : [...prev, id]));
+  }
+
+  function handleReadJournal(id) {
+    setReadJournals((prev) => (prev.includes(id) ? prev : [...prev, id]));
   }
 
   function restart() {
@@ -191,8 +193,13 @@ export default function App() {
     setUnlockedFeed([]);
     setUnlockedLogs([]);
     setUnlockedJournals([]);
+    setReadLogs([]);
+    setReadJournals([]);
+    // we do NOT reset hasStarted here; once they open the manuscript,
+    // restart just restarts Act III from inside it.
   }
 
+  // If we somehow don't find the scene
   if (!currentScene) {
     return (
       <div className="app-root">
@@ -201,9 +208,10 @@ export default function App() {
     );
   }
 
+  const isEnding = currentScene.type === "ending";
+
   const sceneText = (() => {
     if (!currentScene) return "";
-    // Priority: textByMode -> textIfStruck -> text
     if (currentScene.textByMode && currentScene.textByMode[mode]) {
       return currentScene.textByMode[mode];
     }
@@ -213,20 +221,28 @@ export default function App() {
     return currentScene.text;
   })();
 
+  // 👉 Show welcome page first
+  if (!hasStarted) {
+    return (
+      <div className="app-root">
+        <WelcomeScreen onStart={() => setHasStarted(true)} />
+      </div>
+    );
+  }
+
+  // 👉 Once started, show the main two-page layout
   return (
     <div className="app-root">
       <header className="app-header">
-        <h1>Othello – Interactive Folio</h1>
+        <h1>Othello Interactive Narrative Engine</h1>
         <p className="subtitle">
-          A two-page manuscript that lets you rewrite the path of jealousy,
-          trust, and manipulation.
+          Explore how jealousy, trust, and manipulation reshape the tragedy.
         </p>
       </header>
 
-      <div className="layout book-layout">
-        {/* LEFT PAGE – play text + choices */}
+      <div className="layout">
         <main className="main-panel">
-          <section className="scene-card page-left">
+          <section className="scene-card">
             <h2>{currentScene.title}</h2>
             {isEnding && <p className="ending-label">Ending</p>}
             <p className="scene-text">{sceneText}</p>
@@ -234,7 +250,10 @@ export default function App() {
             {!isEnding && (
               <>
                 <p className="mode-indicator">
-                  Current emotional mode: <strong>{mode}</strong>
+                  Current emotional mode:{" "}
+                  <span>
+                    <strong>{mode}</strong>
+                  </span>
                 </p>
                 <ChoicesList
                   scene={currentScene}
@@ -246,38 +265,39 @@ export default function App() {
             )}
 
             {isEnding && (
-              <div className="ending-actions">
-                <button onClick={restart} className="primary-button">
-                  Begin Again from Act 3
-                </button>
-              </div>
+              <>
+                <RunSummary stats={stats} flags={flags} counters={counters} />
+                <div className="ending-actions">
+                  <button onClick={restart} className="primary-button">
+                    Restart from Act 3
+                  </button>
+                </div>
+              </>
             )}
           </section>
         </main>
 
-        {/* RIGHT PAGE – marginalia / notes */}
         <aside className="side-panel">
-          <section className="notes-card page-right">
-            <StatsPanel stats={stats} mode={mode} />
-            <TabbedPanels
-              unlockedFeed={unlockedFeed}
-              unlockedLogs={unlockedLogs}
-              unlockedJournals={unlockedJournals}
-              stats={stats}
-              flags={flags}
-            />
-            {isEnding && (
-              <RunSummary stats={stats} flags={flags} counters={counters} />
-            )}
-          </section>
+          <StatsPanel stats={stats} mode={mode} />
+          <TabbedPanels
+            unlockedFeed={unlockedFeed}
+            unlockedLogs={unlockedLogs}
+            unlockedJournals={unlockedJournals}
+            stats={stats}
+            flags={flags}
+            readLogs={readLogs}
+            readJournals={readJournals}
+            onReadLog={handleReadLog}
+            onReadJournal={handleReadJournal}
+          />
         </aside>
       </div>
 
       <footer className="app-footer">
         <p>
           Based on William Shakespeare&apos;s <em>Othello</em>. This interactive
-          folio models how small choices in trust, jealousy, and dependence
-          reshape the tragedy.
+          adaptation was created as a creative project to explore theme and
+          character.
         </p>
       </footer>
     </div>
