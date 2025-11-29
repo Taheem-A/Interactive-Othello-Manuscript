@@ -205,7 +205,10 @@ function LogsPanel({ unlockedIds, flags, readLogs, onReadLog }) {
     );
   }
 
-  const items = unlockedIds.map((id) => LOG_ITEMS[id]).filter(Boolean);
+  const items = unlockedIds
+    .map((id) => LOG_ITEMS[id])
+    .filter(Boolean)
+    .reverse();
 
   return (
     <ul className="log-list">
@@ -254,7 +257,10 @@ function JournalsPanel({
     );
   }
 
-  const items = unlockedIds.map((id) => JOURNAL_ITEMS[id]).filter(Boolean);
+  const items = unlockedIds
+    .map((id) => JOURNAL_ITEMS[id])
+    .filter(Boolean)
+    .reverse();
 
   return (
     <ul className="journal-list">
