@@ -27,6 +27,9 @@ export default function App() {
   const [stats, setStats] = useState(initialStats);
   const [mode, setMode] = useState(computeMode(initialStats));
 
+  const [activeTab, setActiveTab] = useState("feed");
+  const [focusTarget, setFocusTarget] = useState(null);
+
   const [flags, setFlags] = useState({
     hasStruckDesdemona: false,
     followedCassioPath: false,
@@ -255,6 +258,32 @@ export default function App() {
     setHasUnreadNotifications(false);
   }
 
+  // Notification click handler
+  function handleNotificationClick(notification) {
+  if (!notification) return;
+  const { type, itemId } = notification;
+
+  if (type === "feed") {
+    setActiveTab("feed");
+  } else if (type === "log") {
+    setActiveTab("logs");
+  } else if (type === "journal") {
+    setActiveTab("journals");
+  }
+
+  setFocusTarget({
+    type,
+    itemId,
+    ts: Date.now() // so React sees it as a new target each time
+  });
+}
+
+// Natification dismiss handler
+function handleDismissNotification(id) {
+  setNotifications((prev) => prev.filter((n) => n.id !== id));
+}
+
+
   function restart() {
     setCurrentSceneId("act3_start");
     setStats(initialStats);
@@ -330,6 +359,8 @@ export default function App() {
             notifications={notifications}
             hasUnread={hasUnreadNotifications}
             onOpenCenter={handleOpenNotificationCenter}
+            onNotificationClick={handleNotificationClick}
+            onDismissNotification={handleDismissNotification}
           />
         </div>
       </header>
@@ -385,6 +416,9 @@ export default function App() {
             onReadFeed={handleReadFeed}
             onReadLog={handleReadLog}
             onReadJournal={handleReadJournal}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            focusTarget={focusTarget}
           />
         </aside>
       </div>

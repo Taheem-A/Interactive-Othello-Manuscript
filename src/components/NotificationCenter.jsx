@@ -4,7 +4,9 @@ import { useState } from "react";
 export function NotificationCenter({
   notifications,
   hasUnread,
-  onOpenCenter
+  onOpenCenter,
+  onNotificationClick,
+  onDismissNotification
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -16,6 +18,7 @@ export function NotificationCenter({
     }
   }
 
+  // latest first, but only up to 12
   const latestNotifications = [...notifications].slice(-12).reverse();
 
   return (
@@ -45,16 +48,39 @@ export function NotificationCenter({
           ) : (
             <ul className="notification-list">
               {latestNotifications.map((n) => (
-                <li key={n.id} className="notification-item">
+                <li
+                  key={n.id}
+                  className="notification-item"
+                  onClick={() => {
+                    onNotificationClick?.(n);
+                    setIsOpen(false);
+                  }}
+                >
                   <div className="notification-item-main">
                     <span className={`notification-pill type-${n.type}`}>
                       {labelForType(n.type)}
                     </span>
-                    <span className="notification-message">{n.message}</span>
+                    <span className="notification-message">
+                      {n.message}
+                    </span>
                   </div>
-                  {n.timeLabel && (
-                    <span className="notification-time">{n.timeLabel}</span>
-                  )}
+                  <div className="notification-item-right">
+                    {n.timeLabel && (
+                      <span className="notification-time">
+                        {n.timeLabel}
+                      </span>
+                    )}
+                    <button
+                      className="notification-dismiss"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDismissNotification?.(n.id);
+                      }}
+                      aria-label="Dismiss notification"
+                    >
+                      ×
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>

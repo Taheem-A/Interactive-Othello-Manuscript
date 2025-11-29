@@ -1,5 +1,5 @@
 // src/components/TabbedPanels.jsx
-import { useState } from "react";
+import { useEffect } from "react";
 import { FEED_ITEMS, LOG_ITEMS, JOURNAL_ITEMS } from "../data/index.js";
 
 export function TabbedPanels({
@@ -13,9 +13,11 @@ export function TabbedPanels({
   readJournals,
   onReadFeed,
   onReadLog,
-  onReadJournal
+  onReadJournal,
+  activeTab,
+  onTabChange,
+  focusTarget
 }) {
-  const [activeTab, setActiveTab] = useState("feed");
 
   const unreadFeedCount = unlockedFeed.filter(
     (id) => !readFeed.includes(id)
@@ -27,6 +29,30 @@ export function TabbedPanels({
     (id) => !readJournals.includes(id)
   ).length;
 
+  useEffect(() => {
+    if (!focusTarget) return;
+    const { type, itemId } = focusTarget;
+
+    let elementId;
+    if (type === "feed") elementId = `feed-${itemId}`;
+    else if (type === "log") elementId = `log-${itemId}`;
+    else if (type === "journal") elementId = `journal-${itemId}`;
+    if (!elementId) return;
+
+    const el = document.getElementById(elementId);
+    if (!el) return;
+
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.classList.add("focused");
+
+    const timeoutId = setTimeout(() => {
+      el.classList.remove("focused");
+    }, 1200);
+
+    return () => clearTimeout(timeoutId);
+  }, [focusTarget, activeTab]);
+
+
   return (
     <section className="tabs-card">
       <div className="tabs-header">
@@ -35,7 +61,7 @@ export function TabbedPanels({
             className={
               activeTab === "feed" ? "tab-button active" : "tab-button"
             }
-            onClick={() => setActiveTab("feed")}
+            onClick={() => onTabChange("feed")}
           >
             Social Feed
           </button>
@@ -53,7 +79,7 @@ export function TabbedPanels({
             className={
               activeTab === "logs" ? "tab-button active" : "tab-button"
             }
-            onClick={() => setActiveTab("logs")}
+            onClick={() => onTabChange("logs")}
           >
             Iago&apos;s Logs
           </button>
@@ -71,7 +97,7 @@ export function TabbedPanels({
             className={
               activeTab === "journals" ? "tab-button active" : "tab-button"
             }
-            onClick={() => setActiveTab("journals")}
+            onClick={() => onTabChange("journals")}
           >
             Desdemona&apos;s Journals
           </button>
@@ -150,6 +176,7 @@ function FeedPanel({ unlockedIds, stats, flags, readFeed, onReadFeed }) {
         const isUnread = !readFeed.includes(item.id);
         return (
           <li
+            id={`feed-${item.id}`}
             key={item.id}
             className={`feed-item ${isUnread ? "unread" : ""}`}
             onClick={() => onReadFeed(item.id)}
@@ -196,6 +223,7 @@ function LogsPanel({ unlockedIds, flags, readLogs, onReadLog }) {
 
         return (
           <li
+            id={`log-${item.id}`}
             key={item.id}
             className={`log-item ${isUnread ? "unread" : ""}`}
             onClick={() => onReadLog(item.id)}
@@ -253,6 +281,7 @@ function JournalsPanel({
 
         return (
           <li
+            id={`journal-${item.id}`}
             key={item.id}
             className={`journal-item ${isUnread ? "unread" : ""}`}
             onClick={() => onReadJournal(item.id)}
