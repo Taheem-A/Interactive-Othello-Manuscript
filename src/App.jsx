@@ -359,7 +359,7 @@ function handleDismissNotification(id) {
       <header className="app-header">
         <div className="app-header-inner">
           <div className="app-header-text">
-            <h1>Othello Interactive Narrative Engine</h1>
+            <h1>Othello Interactive Narrative Manuscript</h1>
             <p className="subtitle">
               Explore how jealousy, trust, and manipulation reshape the tragedy.
             </p>
