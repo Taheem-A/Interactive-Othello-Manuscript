@@ -1004,6 +1004,16 @@ body {
   white-space: nowrap;
 }
 
+.prologue-bridge {
+  font-style: italic;
+  margin-top: 0.9rem;
+}
+
+.prologue-close {
+  margin-top: 0.4rem;
+  opacity: 0.95;
+}
+
 /* Animations */
 
 @keyframes bellDotPop {

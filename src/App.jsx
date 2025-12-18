@@ -6,6 +6,7 @@ import { TabbedPanels } from "./components/TabbedPanels.jsx";
 import { RunSummary } from "./components/RunSummary.jsx";
 import { WelcomeScreen } from "./components/WelcomeScreen.jsx";
 import { NotificationCenter } from "./components/NotificationCenter.jsx";
+import { PrologueScreen } from "./components/PrologueScreen.jsx";
 
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
@@ -24,6 +25,7 @@ export default function App() {
 
   // Show welcome page first
   const [hasStarted, setHasStarted] = useState(false);
+  const [hasSeenPrologue, setHasSeenPrologue] = useState(false);
 
   const [currentSceneId, setCurrentSceneId] = useState("act3_start");
 
@@ -74,9 +76,15 @@ export default function App() {
 
   useEffect(() => {
     if (!hasStarted) return;
+
+    if (!hasSeenPrologue) {
+      document.title = `Prologue – Othello: Interactive Manuscript`;
+      return;
+    }
+
     if (!currentScene) return;
     document.title = `${currentScene.title} – Othello: Interactive Manuscript`;
-  }, [currentScene, hasStarted]);
+  }, [currentScene, hasStarted, hasSeenPrologue]);
 
   // Helper to build a human-readable message for notifications
   function buildNotificationMessage(type, id) {
@@ -124,6 +132,8 @@ export default function App() {
   // Handle unlocks on scene enter (with notifications)
   useEffect(() => {
     if (!currentScene) return;
+    if (!hasStarted) return;
+    if (!hasSeenPrologue) return;
 
     if (currentScene.unlockFeedOnEnter) {
       const newIds = currentScene.unlockFeedOnEnter.filter(
@@ -153,7 +163,7 @@ export default function App() {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentScene]);
+  }, [currentScene, hasStarted, hasSeenPrologue]);
 
   function clampStat(n) {
     if (n < 0) return 0;
@@ -269,28 +279,28 @@ export default function App() {
 
   // Notification click handler
   function handleNotificationClick(notification) {
-  if (!notification) return;
-  const { type, itemId } = notification;
+    if (!notification) return;
+    const { type, itemId } = notification;
 
-  if (type === "feed") {
-    setActiveTab("feed");
-  } else if (type === "log") {
-    setActiveTab("logs");
-  } else if (type === "journal") {
-    setActiveTab("journals");
+    if (type === "feed") {
+      setActiveTab("feed");
+    } else if (type === "log") {
+      setActiveTab("logs");
+    } else if (type === "journal") {
+      setActiveTab("journals");
+    }
+
+    setFocusTarget({
+      type,
+      itemId,
+      ts: Date.now() // so React sees it as a new target each time
+    });
   }
 
-  setFocusTarget({
-    type,
-    itemId,
-    ts: Date.now() // so React sees it as a new target each time
-  });
-}
-
-// Natification dismiss handler
-function handleDismissNotification(id) {
-  setNotifications((prev) => prev.filter((n) => n.id !== id));
-}
+  // Natification dismiss handler
+  function handleDismissNotification(id) {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  }
 
 
   function restart() {
@@ -328,6 +338,8 @@ function handleDismissNotification(id) {
     return (
       <div className="app-root">
         <p>Scene not found.</p>
+        <Analytics />
+        <SpeedInsights />
       </div>
     );
   }
@@ -349,7 +361,24 @@ function handleDismissNotification(id) {
   if (!hasStarted) {
     return (
       <div className="app-root">
-        <WelcomeScreen onStart={() => setHasStarted(true)} />
+        <WelcomeScreen
+          onStart={() => {
+            setHasStarted(true);
+            setHasSeenPrologue(false);
+          }}
+        />
+        <Analytics />
+        <SpeedInsights />
+      </div>
+    );
+  }
+
+  if (!hasSeenPrologue) {
+    return (
+      <div className="app-root">
+        <PrologueScreen onContinue={() => setHasSeenPrologue(true)} />
+        <Analytics />
+        <SpeedInsights />
       </div>
     );
   }
