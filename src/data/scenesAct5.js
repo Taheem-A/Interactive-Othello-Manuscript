@@ -6,11 +6,11 @@ export const ACT5_SCENES = [
     act: "Act 5",
     title: "Night in Cyprus",
     text:
-      "Night falls over Cyprus. The sea’s restless roar seeps through the stone walls as candles flicker in the corridors.",
+      "Night falls over Cyprus. The sea's restless roar seeps through the stone walls as candles flicker in the corridors.",
     choices: [
       {
         id: "walk_to_chamber",
-        text: "Walk toward Desdemona’s chamber.",
+        text: "Walk toward Desdemona's chamber.",
         effects: {},
         nextScene: "act5_willow_micro",
         unlockFeed: ["act5_rumours"],
@@ -26,11 +26,11 @@ export const ACT5_SCENES = [
     title: "The Willow Song",
     textByMode: {
       Resisting:
-        "From behind the door you hear Desdemona’s soft voice singing a mournful song about a lover and a willow tree. Each note feels like a plea to be believed.",
+        "From behind the door you hear Desdemona's soft voice singing a mournful song about a lover and a willow tree. Each note feels like a plea to be believed.",
       Torn:
-        "From behind the door you hear Desdemona’s soft voice singing a mournful song about a lover and a willow tree. You cannot tell if it is confession or farewell.",
+        "From behind the door you hear Desdemona's soft voice singing a mournful song about a lover and a willow tree. You cannot tell if it is confession or farewell.",
       Consumed:
-        "From behind the door you hear Desdemona’s soft voice singing a mournful song about a lover and a willow tree. To you it sounds like the lament of someone who knows they have been found out."
+        "From behind the door you hear Desdemona's soft voice singing a mournful song about a lover and a willow tree. To you it sounds like the lament of someone who knows they have been found out."
     },
     unlockFeedOnEnter: ["willow_song"],
     choices: [
@@ -75,7 +75,7 @@ export const ACT5_SCENES = [
     choices: [
       {
         id: "steel_heart",
-        text: "Remind yourself of Iago’s 'proof' and harden your resolve.",
+        text: "Remind yourself of Iago's 'proof' and harden your resolve.",
         effects: { trust: -6, jealousy: +8, dependence: +6 },
         nextScene: "act5_bedroom",
         unlockLogs: ["door_doubt"],
@@ -84,7 +84,7 @@ export const ACT5_SCENES = [
       },
       {
         id: "question_iago",
-        text: "Allow yourself one last doubt—could Iago have lied?",
+        text: "Allow yourself one last doubt — could Iago have lied?",
         effects: { trust: +5, jealousy: -6, dependence: -8 },
         nextScene: "act5_bedroom",
         unlockLogs: ["door_doubt"],
@@ -102,7 +102,7 @@ export const ACT5_SCENES = [
     title: "The Bedroom Confrontation",
     textByMode: {
       Resisting:
-        "Desdemona wakes to find you standing over her. Her fear is tempered by trust—you can still choose to hear her.",
+        "Desdemona wakes to find you standing over her. Her fear is tempered by trust — you can still choose to hear her.",
       Torn:
         "Desdemona wakes to find you standing over her. The room feels split between love and accusation, every word a blade pointed both ways.",
       Consumed:

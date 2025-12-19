@@ -21,7 +21,7 @@ export const FEED_ITEMS = {
     id: "iago_dm_vibes",
     author: "@RumourMill",
     act: "Act 3",
-    text: "When someone keeps whispering in your ear, it’s rarely for your own good. #HonestIago"
+    text: "When someone keeps whispering in your ear, it's rarely for your own good. #HonestIago"
   },
   post_handkerchief: {
     id: "post_handkerchief",
@@ -39,7 +39,7 @@ export const FEED_ITEMS = {
     id: "silent_freeze",
     author: "@FriendOfDesdemona",
     act: "Act 4",
-    text: "He didn’t shout. He didn’t touch her. But the way he went cold was worse than any blow."
+    text: "He didn't shout. He didn't touch her. But the way he went cold was worse than any blow."
   },
   othello_slaps: {
     id: "othello_slaps",
@@ -68,11 +68,11 @@ export const FEED_ITEMS = {
     author: "@LateNightVenice",
     act: "Act 5",
     baseText:
-      "Lights in the General’s chambers long past midnight. Something is very wrong in Cyprus tonight.",
+      "Lights in the General's chambers long past midnight. Something is very wrong in Cyprus tonight.",
     sympatheticVariant:
-      "There’s a heaviness in the fortress tonight. Feels less like scandal and more like a storm of sorrow.",
+      "There's a heaviness in the fortress tonight. Feels less like scandal and more like a storm of sorrow.",
     scandalVariant:
-      "The gossip around the fortress is boiling—whatever happens in that chamber, no one will forget it."
+      "The gossip around the fortress is boiling — whatever happens in that chamber, no one will forget it."
   },
   willow_song: {
     id: "willow_song",
@@ -83,7 +83,7 @@ export const FEED_ITEMS = {
     sympatheticVariant:
       "The song she sang sounded less like guilt and more like a goodbye. Hard to listen to.",
     scandalVariant:
-      "Her song tonight was all about betrayal and sorrow. You’d think someone had wronged her—or she had wronged them."
+      "Her song tonight was all about betrayal and sorrow. You'd think someone had wronged her — or she had wronged them."
   },
   ending_tragic: {
     id: "ending_tragic",

@@ -66,7 +66,7 @@ export const ACT3_SCENES = [
       Resisting:
         "You find Desdemona alone. She smiles when she sees you, reaching for your hand as if nothing in the world has changed.",
       Torn:
-        "Desdemona’s smile flickers when she sees your serious face, but she still reaches for your hand.",
+        "Desdemona's smile flickers when she sees your serious face, but she still reaches for your hand.",
       Consumed:
         "She reaches for your hand as usual, but you feel only the heat of suspicion where there used to be warmth."
     },
@@ -143,7 +143,7 @@ export const ACT3_SCENES = [
   {
     id: "act3_follow_cassio_interpret",
     act: "Act 3",
-    title: "Iago’s Message",
+    title: "Iago's Message",
     text:
       "Later, Iago seeks you out with a concerned look. He asks carefully if you are 'well' after seeing Cassio and Desdemona together.",
     choices: [
@@ -174,11 +174,11 @@ export const ACT3_SCENES = [
     title: "Turning It Over",
     textByMode: {
       Resisting:
-        "Alone, you replay Iago’s words, but Desdemona’s past loyalty still stands stubbornly in your memory.",
+        "Alone, you replay Iago's words, but Desdemona's past loyalty still stands stubbornly in your memory.",
       Torn:
-        "Alone, you replay Iago’s words and Desdemona’s smile until they blur together, each thought cutting the next.",
+        "Alone, you replay Iago's words and Desdemona's smile until they blur together, each thought cutting the next.",
       Consumed:
-        "Alone, you hear only Iago’s warnings. Every good memory of Desdemona feels like a lie covering a deeper betrayal."
+        "Alone, you hear only Iago's warnings. Every good memory of Desdemona feels like a lie covering a deeper betrayal."
     },
     unlockJournalsOnEnter: ["journal1"],
     choices: [
@@ -223,7 +223,7 @@ export const ACT3_SCENES = [
     choices: [
       {
         id: "assume_she_is_upset",
-        text: "She must be upset. Perhaps I’ve been too distant.",
+        text: "She must be upset. Perhaps I've been too distant.",
         effects: { trust: +3, jealousy: -2, dependence: -1 },
         nextScene: "act3_handkerchief",
         unlockLogs: [],
@@ -284,12 +284,12 @@ export const ACT3_SCENES = [
       Torn:
         "Night comes, but sleep does not. Each time you close your eyes you see both her smile and the handkerchief passing away.",
       Consumed:
-        "Night comes, and sleep flees from you as if it too were guilty. All you can see is Desdemona’s imagined betrayal."
+        "Night comes, and sleep flees from you as if it too were guilty. All you can see is Desdemona's imagined betrayal."
     },
     choices: [
       {
         id: "focus_on_iago_words",
-        text: "Rehearse Iago’s warnings in your mind.",
+        text: "Rehearse Iago's warnings in your mind.",
         effects: { trust: -3, jealousy: +5, dependence: +4 },
         nextScene: "act4_public_scene",
         unlockLogs: [],
@@ -305,7 +305,7 @@ export const ACT3_SCENES = [
       },
       {
         id: "focus_on_cassio_laugh",
-        text: "You hear Cassio’s laugh again and again.",
+        text: "You hear Cassio's laugh again and again.",
         effects: { trust: -2, jealousy: +4, dependence: +3 },
         nextScene: "act4_public_scene",
         unlockLogs: [],

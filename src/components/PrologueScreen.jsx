@@ -7,7 +7,7 @@ export function PrologueScreen({ onContinue }) {
         <p className="welcome-kicker">Prologue</p>
 
         <h1 className="welcome-title-main">
-          Acts <span>I–II</span>
+          Acts <span>I—II</span>
         </h1>
 
         <p className="welcome-subtitle">
@@ -19,16 +19,16 @@ export function PrologueScreen({ onContinue }) {
           <p>
             Othello, a respected Moorish general in the service of Venice, has
             secretly married Desdemona, the daughter of a powerful senator.
-            Their love is sincere, yet it provokes outrage—both from Desdemona’s
+            Their love is sincere, yet it provokes outrage — both from Desdemona's
             father, who feels betrayed, and from those who believe Othello
             unworthy of such devotion.
           </p>
 
           <p>
-            Among them is Iago, Othello’s ensign. Passed over for promotion in
+            Among them is Iago, Othello's ensign. Passed over for promotion in
             favor of Cassio, Iago conceals his bitterness behind the appearance
             of loyalty. He presents himself as honest, blunt, and dependable,
-            earning Othello’s complete trust while privately resolving to
+            earning Othello's complete trust while privately resolving to
             destroy both Cassio and the marriage that stands between him and
             advancement.
           </p>
@@ -36,19 +36,19 @@ export function PrologueScreen({ onContinue }) {
           <p>
             As war threatens Cyprus, Othello is summoned to command the Venetian
             forces. Desdemona follows him overseas, leaving Venice behind. In
-            Cyprus, the chaos of battle gives way to a fragile calm—a space in
+            Cyprus, the chaos of battle gives way to a fragile calm — a space in
             which reputation, honor, and appearance matter more than truth.
           </p>
 
           <p>
-            Iago begins to test the foundations of Othello’s confidence. He
-            exploits Cassio’s courtesy, Desdemona’s kindness, and Othello’s deep
+            Iago begins to test the foundations of Othello's confidence. He
+            exploits Cassio's courtesy, Desdemona's kindness, and Othello's deep
             but vulnerable love. Nothing has yet been proven, yet doubt has
             found its first quiet foothold.
           </p>
 
           <p className="prologue-bridge">
-            At this moment, Othello’s trust is strong, his jealousy dormant, and
+            At this moment, Othello's trust is strong, his jealousy dormant, and
             his reliance on Iago unquestioned.
           </p>
 
@@ -62,7 +62,7 @@ export function PrologueScreen({ onContinue }) {
         </button>
 
         <p className="welcome-footnote">
-          This prologue summarizes Acts I–II so the interactive manuscript can
+          This prologue summarizes Acts I—II so the interactive manuscript can
           begin at the turning point: Act III.
         </p>
       </section>

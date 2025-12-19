@@ -95,7 +95,7 @@ export const ACT4_SCENES = [
       Resisting:
         "From the hall you hear Emilia urging Desdemona to stand up for herself. Her voice sounds wounded, not false.",
       Torn:
-        "From the hall you hear Emilia urging Desdemona to stand up for herself. Every word could be the truth—or an act.",
+        "From the hall you hear Emilia urging Desdemona to stand up for herself. Every word could be the truth — or an act.",
       Consumed:
         "From the hall you hear Emilia urging Desdemona to stand up for herself. To your ears, it sounds like rehearsed innocence."
     },
@@ -210,7 +210,7 @@ export const ACT4_SCENES = [
     act: "Act 4",
     title: "Planning the Night",
     text:
-      "Iago finds you again, his voice low and confident. He speaks of Desdemona’s supposed betrayal and suggests that justice must be done before dawn.",
+      "Iago finds you again, his voice low and confident. He speaks of Desdemona's supposed betrayal and suggests that justice must be done before dawn.",
     choices: [
       {
         id: "confront_again",
@@ -245,13 +245,13 @@ export const ACT4_SCENES = [
   {
     id: "act4_iago_quiet",
     act: "Act 4",
-    title: "Iago’s Silence",
+    title: "Iago's Silence",
     text:
       "For once, Iago grows quiet. He watches you with a small, satisfied smile, saying that he trusts you to 'do what is necessary.' His confidence unsettles you.",
     choices: [
       {
         id: "trust_iago_completely",
-        text: "His certainty reassures you—you must act.",
+        text: "His certainty reassures you — you must act.",
         effects: { trust: -3, jealousy: +5, dependence: +5 },
         nextScene: "act5_night",
         unlockLogs: [],

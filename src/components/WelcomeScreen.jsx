@@ -11,7 +11,7 @@ export function WelcomeScreen({ onStart }) {
         </h1>
 
         <p className="welcome-subtitle">
-          A reimagining of Acts III–V that lets you explore how jealousy, trust,
+          A reimagining of Acts III—V that lets you explore how jealousy, trust,
           and manipulation reshape the ending of the play.
         </p>
 
@@ -20,7 +20,7 @@ export function WelcomeScreen({ onStart }) {
             <strong>Adapted by:</strong> Taheem Akter
           </p>
           <p>
-            <strong>Course:</strong> ENG4U – Shakespeare Unit
+            <strong>Course:</strong> ENG4U — Shakespeare Unit
           </p>
           <p>
             <strong>Source Text:</strong> William Shakespeare&apos;s{" "}
@@ -32,8 +32,8 @@ export function WelcomeScreen({ onStart }) {
           <p>
             This project treats <em>Othello</em> as if it were a living
             manuscript. Your decisions adjust Othello&apos;s inner state
-            numerically—his trust, jealousy, dependence on Iago, and public
-            reputation—and those shifts ripple outward into new rumours, private
+            numerically — his trust, jealousy, dependence on Iago, and public
+            reputation — and those shifts ripple outward into new rumours, private
             logs, and alternate endings.
           </p>
           <p>

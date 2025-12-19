@@ -78,12 +78,12 @@ export default function App() {
     if (!hasStarted) return;
 
     if (!hasSeenPrologue) {
-      document.title = `Prologue – Othello: Interactive Manuscript`;
+      document.title = `Prologue — Othello: Interactive Manuscript`;
       return;
     }
 
     if (!currentScene) return;
-    document.title = `${currentScene.title} – Othello: Interactive Manuscript`;
+    document.title = `${currentScene.title} — Othello: Interactive Manuscript`;
   }, [currentScene, hasStarted, hasSeenPrologue]);
 
   // Helper to build a human-readable message for notifications

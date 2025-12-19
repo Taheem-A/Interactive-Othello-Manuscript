@@ -1,8 +1,8 @@
 # 📜 *Othello: Interactive Manuscript*
 
-### An Interactive Narrative Experience Inspired by Shakespeare’s *Othello*
+### An Interactive Narrative Experience Inspired by Shakespeare's *Othello*
 
-A fully original **ENG4U Creative Task** reimagining Shakespeare’s *Othello* as a modern interactive manuscript blending story, emotional simulation, and character-perspective documents.
+A fully original **ENG4U Creative Task** reimagining Shakespeare's *Othello* as a modern interactive manuscript blending story, emotional simulation, and character-perspective documents.
 
 Built using **React**, **Vite**, and deployed via **Vercel**.
 
@@ -14,8 +14,8 @@ Built using **React**, **Vite**, and deployed via **Vercel**.
 
 * A **branching narrative** based on user decisions
 * A dynamic **emotional stat simulation** (Jealousy, Trust, Dependence)
-* **Iago’s Deception Logs**
-* **Desdemona’s Private Journals**
+* **Iago's Deception Logs**
+* **Desdemona's Private Journals**
 * A fictional **Social Feed** reflecting public perception
 
 The project presents the tragedy through a **manuscript-style UI**, creating an immersive 1600s aesthetic while still allowing modern user interactivity.
@@ -40,7 +40,7 @@ Your choices influence three emotional metrics:
 
 | Stat           | Description                                        |
 | -------------- | -------------------------------------------------- |
-| **Jealousy**   | Measures Othello’s rising suspicion and insecurity |
+| **Jealousy**   | Measures Othello's rising suspicion and insecurity |
 | **Trust**      | His belief in Desdemona, Cassio, and himself       |
 | **Dependence** | His emotional reliance on Iago                     |
 
@@ -63,15 +63,15 @@ Final endings are determined by statistical thresholds + triggered narrative fla
 
 1. **📣 Social Feed**
 
-   * Public rumours, soldiers’ comments, and gossip
+   * Public rumours, soldiers' comments, and gossip
    * Unlocks dynamically based on your choices
 
-2. **🩸 Iago’s Logs**
+2. **🩸 Iago's Logs**
 
    * His private manipulation notes
    * Updates when new schemes unfold
 
-3. **🌸 Desdemona’s Journal**
+3. **🌸 Desdemona's Journal**
 
    * Personal thoughts and emotional reflections
    * Gives meta-perspective on the relationship
@@ -145,7 +145,7 @@ Includes:
 This project was created as part of the **ENG4U: Grade 12 English** curriculum.
 It serves as:
 
-* A creative reinterpretation of Shakespeare’s *Othello*
+* A creative reinterpretation of Shakespeare's *Othello*
 * A demonstration of deep character understanding
 * A multi-modal literary and technical artifact
 * A modern engagement with classical text themes

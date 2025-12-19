@@ -72,7 +72,7 @@ body {
   padding: 2.1rem 1.5rem 2.7rem;
 }
 
-/* Header – play title */
+/* Header — play title */
 
 .app-header {
   text-align: center;
@@ -420,7 +420,7 @@ body {
   color: #86624a;
 }
 
-/* Stats page (right) – like a small chart in the margin */
+/* Stats page (right) — like a small chart in the margin */
 
 .stats-card h3 {
   margin: 0 0 0.55rem 0;
@@ -567,7 +567,7 @@ body {
   animation: fadeInSoft 0.25s ease-out;
 }
 
-/* Lists – feel like scribbled marginal notes */
+/* Lists — feel like scribbled marginal notes */
 
 .feed-list,
 .log-list,

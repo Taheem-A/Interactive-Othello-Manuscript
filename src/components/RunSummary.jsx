@@ -83,7 +83,7 @@ function getArchetype(stats, flags, counters, dominantMode) {
     return {
       name: "The Consumed Jealous",
       description:
-        "You frequently chose suspicion and violence over trust, leaning heavily on Iago’s version of events. Your tragedy is not that you lacked warnings, but that you would not hear them."
+        "You frequently chose suspicion and violence over trust, leaning heavily on Iago's version of events. Your tragedy is not that you lacked warnings, but that you would not hear them."
     };
   }
 
